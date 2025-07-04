@@ -647,7 +647,139 @@ end
 updateSeedDropdownText()
 seedDropdownList.CanvasSize = UDim2.new(0, 0, 0, #seedOptions * 38)
 
--- Helper to update toggle positions based on dropdowns
+-- Gear Dropdown Button
+local gearDropdownBtn = Instance.new("TextButton")
+gearDropdownBtn.Name = "GearDropdownBtn"
+gearDropdownBtn.Size = UDim2.new(1, -40, 0, 44)
+gearDropdownBtn.BackgroundColor3 = Color3.fromRGB(40, 90, 180)
+gearDropdownBtn.Text = "BUY GEAR:"
+gearDropdownBtn.Font = Enum.Font.SourceSansBold
+gearDropdownBtn.TextSize = 22
+gearDropdownBtn.TextColor3 = Color3.fromRGB(255,255,255)
+gearDropdownBtn.BorderSizePixel = 0
+gearDropdownBtn.TextXAlignment = Enum.TextXAlignment.Center
+gearDropdownBtn.Parent = shopFrame
+gearDropdownBtn.ZIndex = 2
+
+-- Gear Dropdown ScrollingFrame
+local gearDropdownList = Instance.new("ScrollingFrame")
+gearDropdownList.Name = "GearDropdownList"
+gearDropdownList.Size = UDim2.new(1, -40, 0, 0)
+gearDropdownList.BackgroundColor3 = Color3.fromRGB(60, 120, 180)
+gearDropdownList.BorderSizePixel = 0
+gearDropdownList.Visible = false
+gearDropdownList.Parent = shopFrame
+gearDropdownList.ZIndex = 3
+gearDropdownList.ClipsDescendants = true
+gearDropdownList.CanvasSize = UDim2.new(0, 0, 0, 0)
+gearDropdownList.ScrollBarThickness = 10
+
+-- Gear List (sample, replace with your own if needed)
+local gearOptions = {
+    "Watering Can",
+    "Golden Watering Can",
+    "Sprinkler",
+    "Super Sprinkler",
+    "Hoe",
+    "Golden Hoe",
+    "Trowel",
+    "Fertilizer",
+    "Bug Net",
+    "Bee Smoker"
+}
+local selectedGears = {}
+local function updateGearDropdownText()
+    if #selectedGears == 0 then
+        gearDropdownBtn.Text = "BUY GEAR:"
+    else
+        gearDropdownBtn.Text = "BUY GEAR: " .. table.concat(selectedGears, ", ")
+    end
+end
+for i, name in ipairs(gearOptions) do
+    local opt = Instance.new("TextButton")
+    opt.Size = UDim2.new(1, 0, 0, 38)
+    opt.Position = UDim2.new(0, 0, 0, (i-1)*38)
+    opt.BackgroundColor3 = Color3.fromRGB(100, 170, 220)
+    opt.Text = name
+    opt.Font = Enum.Font.SourceSans
+    opt.TextSize = 20
+    opt.TextColor3 = Color3.fromRGB(255,255,255)
+    opt.BorderSizePixel = 0
+    opt.Parent = gearDropdownList
+    opt.ZIndex = 4
+    opt.MouseButton1Click:Connect(function()
+        local found = false
+        for j, v in ipairs(selectedGears) do
+            if v == name then table.remove(selectedGears, j) found = true break end
+        end
+        if not found then table.insert(selectedGears, name) end
+        updateGearDropdownText()
+        opt.BackgroundColor3 = found and Color3.fromRGB(100, 170, 220) or Color3.fromRGB(60, 200, 120)
+    end)
+end
+updateGearDropdownText()
+gearDropdownList.CanvasSize = UDim2.new(0, 0, 0, #gearOptions * 38)
+
+-- Auto Buy Gear Toggle
+local autoBuyGearToggle = Instance.new("TextButton")
+autoBuyGearToggle.Name = "AutoBuyGearToggle"
+autoBuyGearToggle.Size = UDim2.new(1, -32, 0, 36)
+autoBuyGearToggle.BackgroundColor3 = Color3.fromRGB(60, 90, 130)
+autoBuyGearToggle.Text = "AUTO BUY GEAR"
+autoBuyGearToggle.Font = Enum.Font.SourceSansBold
+autoBuyGearToggle.TextSize = 20
+autoBuyGearToggle.TextColor3 = Color3.fromRGB(255,255,255)
+autoBuyGearToggle.BorderSizePixel = 0
+autoBuyGearToggle.TextXAlignment = Enum.TextXAlignment.Left
+autoBuyGearToggle.Parent = shopFrame
+
+local gearCheck = Instance.new("TextLabel")
+gearCheck.Name = "Checkmark"
+gearCheck.Size = UDim2.new(0, 32, 1, 0)
+gearCheck.Position = UDim2.new(1, -36, 0, 0)
+gearCheck.BackgroundTransparency = 1
+gearCheck.Font = Enum.Font.SourceSansBold
+gearCheck.TextSize = 24
+gearCheck.TextColor3 = Color3.fromRGB(220, 220, 220)
+gearCheck.Text = ""
+gearCheck.Parent = autoBuyGearToggle
+
+local autoBuyGearState = false
+local autoBuyGearLoopRunning = false
+local function updateAutoBuyGearToggle()
+    if autoBuyGearState then
+        autoBuyGearToggle.BackgroundColor3 = Color3.fromRGB(40, 90, 180)
+        gearCheck.Text = "✅"
+    else
+        autoBuyGearToggle.BackgroundColor3 = Color3.fromRGB(60, 90, 130)
+        gearCheck.Text = ""
+    end
+end
+updateAutoBuyGearToggle()
+
+autoBuyGearToggle.MouseButton1Click:Connect(function()
+    autoBuyGearState = not autoBuyGearState
+    updateAutoBuyGearToggle()
+    if autoBuyGearState and not autoBuyGearLoopRunning then
+        autoBuyGearLoopRunning = true
+        task.spawn(function()
+            while autoBuyGearState do
+                for _, gear in ipairs(selectedGears) do
+                    if buyGearRemote then
+                        buyGearRemote:FireServer(gear)
+                    end
+                end
+                task.wait(0.1)
+            end
+            autoBuyGearLoopRunning = false
+        end)
+    end
+end)
+
+-- Automation Remote for Gear
+local buyGearRemote = ReplicatedStorage:FindFirstChild("GameEvents"):FindFirstChild("BuyGearStock")
+
+-- Update SHOP toggle/element positions
 function updateShopTogglePositions()
     local y = 20
     local contentBottom = shopFrame.AbsolutePosition.Y + shopFrame.AbsoluteSize.Y
@@ -656,14 +788,10 @@ function updateShopTogglePositions()
     y = y + 44
     -- Egg Dropdown List
     if eggDropdownList.Visible then
-        local dropdownTop = shopFrame.AbsolutePosition.Y + y
-        local maxHeight = contentBottom - dropdownTop - 20
         local needed = #eggOptions * 38
-        local showHeight = math.max(0, math.min(needed, maxHeight))
         eggDropdownList.Position = UDim2.new(0, 20, 0, y)
-        eggDropdownList.Size = UDim2.new(1, -40, 0, showHeight)
-        eggDropdownList.CanvasSize = UDim2.new(0, 0, 0, needed)
-        y = y + showHeight
+        eggDropdownList.Size = UDim2.new(1, -40, 0, needed)
+        y = y + needed
     else
         eggDropdownList.Position = UDim2.new(0, 20, 0, y)
         eggDropdownList.Size = UDim2.new(1, -40, 0, 0)
@@ -673,21 +801,31 @@ function updateShopTogglePositions()
     y = y + 44
     -- Seed Dropdown List
     if seedDropdownList.Visible then
-        local dropdownTop = shopFrame.AbsolutePosition.Y + y
-        local maxHeight = contentBottom - dropdownTop - 20
         local needed = #seedOptions * 38
-        local showHeight = math.max(0, math.min(needed, maxHeight))
         seedDropdownList.Position = UDim2.new(0, 20, 0, y)
-        seedDropdownList.Size = UDim2.new(1, -40, 0, showHeight)
-        seedDropdownList.CanvasSize = UDim2.new(0, 0, 0, needed)
-        y = y + showHeight
+        seedDropdownList.Size = UDim2.new(1, -40, 0, needed)
+        y = y + needed
     else
         seedDropdownList.Position = UDim2.new(0, 20, 0, y)
         seedDropdownList.Size = UDim2.new(1, -40, 0, 0)
     end
+    -- Gear Dropdown Button
+    gearDropdownBtn.Position = UDim2.new(0, 20, 0, y)
+    y = y + 44
+    -- Gear Dropdown List
+    if gearDropdownList.Visible then
+        local needed = #gearOptions * 38
+        gearDropdownList.Position = UDim2.new(0, 20, 0, y)
+        gearDropdownList.Size = UDim2.new(1, -40, 0, needed)
+        y = y + needed
+    else
+        gearDropdownList.Position = UDim2.new(0, 20, 0, y)
+        gearDropdownList.Size = UDim2.new(1, -40, 0, 0)
+    end
     -- Toggles
     autoBuyEggToggle.Position = UDim2.new(0, 20, 0, y + 18)
     autoBuySeedToggle.Position = UDim2.new(0, 20, 0, y + 18 + 54)
+    autoBuyGearToggle.Position = UDim2.new(0, 20, 0, y + 18 + 108)
 end
 
 eggDropdownBtn.MouseButton1Click:Connect(function()
@@ -697,6 +835,11 @@ end)
 
 seedDropdownBtn.MouseButton1Click:Connect(function()
     seedDropdownList.Visible = not seedDropdownList.Visible
+    updateShopTogglePositions()
+end)
+
+gearDropdownBtn.MouseButton1Click:Connect(function()
+    gearDropdownList.Visible = not gearDropdownList.Visible
     updateShopTogglePositions()
 end)
 
@@ -710,6 +853,10 @@ UserInputService.InputBegan:Connect(function(input, processed)
         end
         if seedDropdownList.Visible and input.Target and not seedDropdownBtn:IsAncestorOf(input.Target) then
             seedDropdownList.Visible = false
+            changed = true
+        end
+        if gearDropdownList.Visible and input.Target and not gearDropdownBtn:IsAncestorOf(input.Target) then
+            gearDropdownList.Visible = false
             changed = true
         end
         if changed then updateShopTogglePositions() end

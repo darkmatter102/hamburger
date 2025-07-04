@@ -210,7 +210,7 @@ closeBtn.TextColor3 = Color3.fromRGB(255,255,255)
 closeBtn.Parent = topBar
 
 -- Sidebar Tabs
-local tabNames = {"EVENT", "SHOP", "FARM", "GEAR"} -- Added GEAR tab
+local tabNames = {"EVENT", "SHOP", "FARM"}
 local tabButtons = {}
 for i, name in ipairs(tabNames) do
     local tabBtn = Instance.new("TextButton")
@@ -647,163 +647,7 @@ end
 updateSeedDropdownText()
 seedDropdownList.CanvasSize = UDim2.new(0, 0, 0, #seedOptions * 38)
 
--- GEAR DROPDOWN DATA
-local gearOptions = {
-    {name = "Watering Can", details = "Speeds up Plant Growth, 10 uses.", price = "50,000", rarity = "Common"},
-    {name = "Trowel", details = "Moves Plants, five uses.", price = "100,000", rarity = "Uncommon"},
-    {name = "Recall Wrench", details = "Teleports to Gear Shop, five uses.", price = "150,000", rarity = "Uncommon"},
-    {name = "Basic Sprinkler", details = "Increases Growth Speed and Fruit Size, lasts five minutes.", price = "25,000", rarity = "Rare"},
-    {name = "Advanced Sprinkler", details = "Increases Growth Speed and Mutation chances, lasts five minutes.", price = "50,000", rarity = "Legendary"},
-    {name = "Godly Sprinkler", details = "Increases Growth Speed, Mutation chances and Fruit Size, lasts five minutes.", price = "120,000", rarity = "Mythical"},
-    {name = "Magnifying Glass", details = "Inspect plants to reveal the value without collecting them.", price = "10,000,000", rarity = "Mythical"},
-    {name = "Tanning Mirror", details = "Redirects Sun Beams 10 times before being destroyed.", price = "1,000,000", rarity = "Mythical"},
-    {name = "Master Sprinkler", details = "Greatly increases Growth Speed, Mutation Chances and Fruit Size, lasts 10 minutes.", price = "10,000,000", rarity = "Divine"},
-    {name = "Cleaning Spray", details = "Cleans mutations off fruit, 10 uses.", price = "15,000,000", rarity = "Divine"},
-    {name = "Favourite Tool", details = "Favourites your fruit plants to prevent collecting, 20 uses.", price = "20,000,000", rarity = "Divine"},
-    {name = "Harvest Tool", details = "Harvests all fruit from a chosen plant, 5 uses.", price = "30,000,000", rarity = "Divine"},
-    {name = "Friendship Pot", details = "A flower pot to share with a friend!", price = "15,000,000", rarity = "Divine"},
-}
-local selectedGears = {}
-
--- GEAR DROPDOWN BUTTON (under seed dropdown)
-local gearDropdownBtn = Instance.new("TextButton")
-gearDropdownBtn.Name = "GearDropdownBtn"
-gearDropdownBtn.Size = UDim2.new(1, -40, 0, 44)
-gearDropdownBtn.Position = UDim2.new(0, 20, 0, 118 + (#seedOptions > 0 and (#seedOptions * 38) or 0))
-gearDropdownBtn.BackgroundColor3 = Color3.fromRGB(40, 90, 180)
-gearDropdownBtn.Text = "GEAR:"
-gearDropdownBtn.Font = Enum.Font.SourceSansBold
-gearDropdownBtn.TextSize = 22
-gearDropdownBtn.TextColor3 = Color3.fromRGB(255,255,255)
-gearDropdownBtn.BorderSizePixel = 0
-gearDropdownBtn.TextXAlignment = Enum.TextXAlignment.Center
-gearDropdownBtn.Parent = shopFrame
-gearDropdownBtn.ZIndex = 2
-
--- GEAR DROPDOWN LIST
-local gearDropdownList = Instance.new("ScrollingFrame")
-gearDropdownList.Name = "GearDropdownList"
-gearDropdownList.Size = UDim2.new(1, -40, 0, 0)
-gearDropdownList.Position = UDim2.new(0, 20, 0, 162 + (#seedOptions > 0 and (#seedOptions * 38) or 0))
-gearDropdownList.BackgroundColor3 = Color3.fromRGB(60, 120, 180)
-gearDropdownList.BorderSizePixel = 0
-gearDropdownList.Visible = false
-gearDropdownList.Parent = shopFrame
-gearDropdownList.ZIndex = 3
-gearDropdownList.ClipsDescendants = true
-gearDropdownList.CanvasSize = UDim2.new(0, 0, 0, 0)
-gearDropdownList.ScrollBarThickness = 10
-
-local function updateGearDropdownText()
-    if #selectedGears == 0 then
-        gearDropdownBtn.Text = "GEAR:"
-    else
-        local names = {}
-        for _, g in ipairs(selectedGears) do table.insert(names, g) end
-        gearDropdownBtn.Text = "GEAR: " .. table.concat(names, ", ")
-    end
-end
-for i, gear in ipairs(gearOptions) do
-    local opt = Instance.new("TextButton")
-    opt.Size = UDim2.new(1, 0, 0, 38)
-    opt.Position = UDim2.new(0, 0, 0, (i-1)*38)
-    opt.BackgroundColor3 = Color3.fromRGB(100, 170, 220)
-    opt.Text = gear.name
-    opt.Font = Enum.Font.SourceSans
-    opt.TextSize = 20
-    opt.TextColor3 = Color3.fromRGB(255,255,255)
-    opt.BorderSizePixel = 0
-    opt.Parent = gearDropdownList
-    opt.ZIndex = 4
-    opt.MouseEnter:Connect(function()
-        opt.Text = gear.name .. "\n" .. gear.details .. "\n" .. gear.price .. " | " .. gear.rarity
-        opt.TextWrapped = true
-    end)
-    opt.MouseLeave:Connect(function()
-        opt.Text = gear.name
-        opt.TextWrapped = false
-    end)
-    opt.MouseButton1Click:Connect(function()
-        local found = false
-        for j, v in ipairs(selectedGears) do
-            if v == gear.name then table.remove(selectedGears, j) found = true break end
-        end
-        if not found then table.insert(selectedGears, gear.name) end
-        updateGearDropdownText()
-        opt.BackgroundColor3 = found and Color3.fromRGB(100, 170, 220) or Color3.fromRGB(60, 200, 120)
-    end)
-end
-updateGearDropdownText()
-gearDropdownList.CanvasSize = UDim2.new(0, 0, 0, #gearOptions * 38)
-
--- AUTO BUY GEAR TOGGLE
-local autoBuyGearToggle = Instance.new("TextButton")
-autoBuyGearToggle.Name = "AutoBuyGearToggle"
-autoBuyGearToggle.Size = UDim2.new(1, -32, 0, 36)
-autoBuyGearToggle.BackgroundColor3 = Color3.fromRGB(60, 90, 130)
-autoBuyGearToggle.Text = "AUTO BUY GEAR"
-autoBuyGearToggle.Font = Enum.Font.SourceSansBold
-autoBuyGearToggle.TextSize = 20
-autoBuyGearToggle.TextColor3 = Color3.fromRGB(255,255,255)
-autoBuyGearToggle.BorderSizePixel = 0
-autoBuyGearToggle.TextXAlignment = Enum.TextXAlignment.Left
-autoBuyGearToggle.Parent = shopFrame
-
-local gearCheck = Instance.new("TextLabel")
-gearCheck.Name = "Checkmark"
-gearCheck.Size = UDim2.new(0, 32, 1, 0)
-gearCheck.Position = UDim2.new(1, -36, 0, 0)
-gearCheck.BackgroundTransparency = 1
-gearCheck.Font = Enum.Font.SourceSansBold
-gearCheck.TextSize = 24
-gearCheck.TextColor3 = Color3.fromRGB(220, 220, 220)
-gearCheck.Text = ""
-gearCheck.Parent = autoBuyGearToggle
-
-local autoBuyGearState = false
-local autoBuyGearLoopRunning = false
-local function updateAutoBuyGearToggle()
-    if autoBuyGearState then
-        autoBuyGearToggle.BackgroundColor3 = Color3.fromRGB(40, 90, 180)
-        gearCheck.Text = "✅"
-    else
-        autoBuyGearToggle.BackgroundColor3 = Color3.fromRGB(60, 90, 130)
-        gearCheck.Text = ""
-    end
-end
-updateAutoBuyGearToggle()
-
-autoBuyGearToggle.MouseButton1Click:Connect(function()
-    autoBuyGearState = not autoBuyGearState
-    updateAutoBuyGearToggle()
-    if autoBuyGearState and not autoBuyGearLoopRunning then
-        autoBuyGearLoopRunning = true
-        task.spawn(function()
-            while autoBuyGearState do
-                for _, gear in ipairs(selectedGears) do
-                    if isGearInStock(gear) then
-                        if buyGearRemote then
-                            buyGearRemote:FireServer(gear)
-                        end
-                    end
-                end
-                task.wait(0.1)
-            end
-            autoBuyGearLoopRunning = false
-        end)
-    end
-end)
-
--- Helper: Check if a gear is in stock (stub, should be replaced with real stock check if available)
-local function isGearInStock(gearName)
-    return true -- Assume always in stock for now
-end
-
--- Automation Remote for Gear
-local buyGearRemote = ReplicatedStorage:FindFirstChild("GameEvents"):FindFirstChild("BuyGearStock")
-
--- Update shop toggle positions to include gear dropdown and toggle
-local oldUpdateShopTogglePositions = updateShopTogglePositions
+-- Helper to update toggle positions based on dropdowns
 function updateShopTogglePositions()
     local y = 20
     local contentBottom = shopFrame.AbsolutePosition.Y + shopFrame.AbsoluteSize.Y
@@ -841,37 +685,22 @@ function updateShopTogglePositions()
         seedDropdownList.Position = UDim2.new(0, 20, 0, y)
         seedDropdownList.Size = UDim2.new(1, -40, 0, 0)
     end
-    -- Gear Dropdown Button
-    gearDropdownBtn.Position = UDim2.new(0, 20, 0, y)
-    y = y + 44
-    -- Gear Dropdown List
-    if gearDropdownList.Visible then
-        local dropdownTop = shopFrame.AbsolutePosition.Y + y
-        local maxHeight = contentBottom - dropdownTop - 20
-        local needed = #gearOptions * 38
-        local showHeight = math.max(0, math.min(needed, maxHeight))
-        gearDropdownList.Position = UDim2.new(0, 20, 0, y)
-        gearDropdownList.Size = UDim2.new(1, -40, 0, showHeight)
-        gearDropdownList.CanvasSize = UDim2.new(0, 0, 0, needed)
-        y = y + showHeight
-    else
-        gearDropdownList.Position = UDim2.new(0, 20, 0, y)
-        gearDropdownList.Size = UDim2.new(1, -40, 0, 0)
-    end
     -- Toggles
     autoBuyEggToggle.Position = UDim2.new(0, 20, 0, y + 18)
     autoBuySeedToggle.Position = UDim2.new(0, 20, 0, y + 18 + 54)
-    autoBuyGearToggle.Position = UDim2.new(0, 20, 0, y + 18 + 108)
 end
 
--- Dropdown button logic
-gearDropdownBtn.MouseButton1Click:Connect(function()
-    gearDropdownList.Visible = not gearDropdownList.Visible
+eggDropdownBtn.MouseButton1Click:Connect(function()
+    eggDropdownList.Visible = not eggDropdownList.Visible
     updateShopTogglePositions()
 end)
 
--- Hide dropdowns if clicking elsewhere (add gear)
-local oldUserInputBegan = UserInputService.InputBegan
+seedDropdownBtn.MouseButton1Click:Connect(function()
+    seedDropdownList.Visible = not seedDropdownList.Visible
+    updateShopTogglePositions()
+end)
+
+-- Hide dropdowns if clicking elsewhere
 UserInputService.InputBegan:Connect(function(input, processed)
     if input.UserInputType == Enum.UserInputType.MouseButton1 then
         local changed = false
@@ -883,24 +712,57 @@ UserInputService.InputBegan:Connect(function(input, processed)
             seedDropdownList.Visible = false
             changed = true
         end
-        if gearDropdownList.Visible and not gearDropdownBtn:IsAncestorOf(input.Target) then
-            gearDropdownList.Visible = false
-            changed = true
-        end
         if changed then updateShopTogglePositions() end
     end
 end)
 
--- Auto-buy gear loop (background)
-if not autoBuyGearLoopRunning then
-    autoBuyGearLoopRunning = true
+-- Automation Remotes
+local buyEggRemote = ReplicatedStorage:FindFirstChild("GameEvents"):FindFirstChild("BuyPetEgg")
+local buySeedRemote = ReplicatedStorage:FindFirstChild("GameEvents"):FindFirstChild("BuySeedStock")
+
+-- Helper: Check if an egg/seed is in stock (stub, should be replaced with real stock check if available)
+local function isEggInStock(eggName)
+    -- TODO: Replace with real stock check if possible
+    return true -- Assume always in stock for now
+end
+local function isSeedInStock(seedName)
+    -- TODO: Replace with real stock check if possible
+    return true -- Assume always in stock for now
+end
+
+-- Auto-buy logic
+local autoBuyEggLoopRunning = false
+local autoBuySeedLoopRunning = false
+
+-- Start auto-buy egg loop on script load
+if not autoBuyEggLoopRunning then
+    autoBuyEggLoopRunning = true
     task.spawn(function()
         while true do
-            if autoBuyGearState then
-                for _, gear in ipairs(selectedGears) do
-                    if isGearInStock(gear) then
-                        if buyGearRemote then
-                            buyGearRemote:FireServer(gear)
+            if autoBuyEggState then
+                for _, egg in ipairs(selectedEggs) do
+                    if isEggInStock(egg) then
+                        if buyEggRemote then
+                            buyEggRemote:FireServer(egg)
+                        end
+                    end
+                end
+            end
+            task.wait(0.1)
+        end
+    end)
+end
+
+-- Start auto-buy seed loop on script load
+if not autoBuySeedLoopRunning then
+    autoBuySeedLoopRunning = true
+    task.spawn(function()
+        while true do
+            if autoBuySeedState then
+                for _, seed in ipairs(selectedSeeds) do
+                    if isSeedInStock(seed) then
+                        if buySeedRemote then
+                            buySeedRemote:FireServer(seed)
                         end
                     end
                 end
@@ -944,7 +806,14 @@ local function hideUI()
 end
 local function showUI()
     sidebar.Visible = true
+    showUIButton.Visible = false
 end
+closeBtn.MouseButton1Click:Connect(hideUI)
+showUIButton.MouseButton1Click:Connect(showUI)
+minimizeBtn.MouseButton1Click:Connect(function()
+    sidebar.Visible = not sidebar.Visible
+    showUIButton.Visible = not sidebar.Visible
+end)
 UserInputService.InputBegan:Connect(function(input, processed)
     if not processed and input.KeyCode == Enum.KeyCode.RightShift then
         if sidebar.Visible then

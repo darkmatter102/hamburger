@@ -766,21 +766,10 @@ autoBuyGearToggle.MouseButton1Click:Connect(function()
         task.spawn(function()
             while autoBuyGearState do
                 local buyGearRemote = ReplicatedStorage:FindFirstChild("GameEvents") and ReplicatedStorage.GameEvents:FindFirstChild("BuyGearStock")
-                if not buyGearRemote then
-                    warn("[GAG] BuyGearStock remote not found!")
-                end
                 for _, gear in ipairs(selectedGears) do
                     if isGearInStock(gear) then
                         if buyGearRemote then
-                            print("[GAG] Attempting to buy gear:", gear)
-                            local success, err = pcall(function()
-                                buyGearRemote:FireServer(gear)
-                            end)
-                            if not success then
-                                warn("[GAG] Error firing BuyGearStock:", err)
-                            end
-                        else
-                            warn("[GAG] BuyGearStock remote missing when trying to buy:", gear)
+                            buyGearRemote:FireServer(gear)
                         end
                     end
                 end
@@ -888,11 +877,11 @@ dropdownOverlay.Text = ""
 dropdownOverlay.Visible = false
 dropdownOverlay.Parent = screenGui
 
-local function showDropdownOverlay()
+def function showDropdownOverlay()
     dropdownOverlay.Visible = true
 end
 
-local function hideDropdownOverlay()
+def function hideDropdownOverlay()
     dropdownOverlay.Visible = false
 end
 

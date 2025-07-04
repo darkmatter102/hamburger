@@ -305,53 +305,58 @@ autoSubmitToggle.MouseButton1Click:Connect(function()
     updateAutoSubmitToggle()
 end)
 
--- SHOP TAB CONTENT
+-- === SHOP TAB CONTENT CLEANUP ===
 local shopFrame = tabContent["SHOP"]
 
--- Gear Dropdown Data
-local gearOptions = {
-    "Watering Can",
-    "Trowel",
-    "Recall Wrench",
-    "Basic Sprinkler",
-    "Advanced Sprinkler",
-    "Godly Sprinkler",
-    "Magnifying Glass",
-    "Tanning Mirror",
-    "Master Sprinkler",
-    "Cleaning Spray",
-    "Favourite Tool",
-    "Harvest Tool",
-    "Friendship Pot"
+-- Dropdown Data
+local eggOptions = {
+    "Common Egg", "Uncommon Egg", "Rare Egg", "Legendary Egg", "Mythical Egg", "Bug Egg", "Exotic Bug Egg", "Night Egg", "Premium Night Egg", "Bee Egg", "Anti Bee Egg", "Premium Anti Bee Egg", "Common Summer Egg", "Rare Summer Egg", "Paradise Egg", "Oasis Egg", "Premium Oasis Egg"
 }
-local gearDetails = {
-    ["Watering Can"] = "Speeds up Plant Growth, 10 uses. | 50,000 | Common",
-    ["Trowel"] = "Moves Plants, five uses. | 100,000 | Uncommon",
-    ["Recall Wrench"] = "Teleports to Gear Shop, five uses. | 150,000 | Uncommon",
-    ["Basic Sprinkler"] = "Increases Growth Speed and Fruit Size, lasts five minutes. | 25,000 | Rare",
-    ["Advanced Sprinkler"] = "Increases Growth Speed and Mutation chances, lasts five minutes. | 50,000 | Legendary",
-    ["Godly Sprinkler"] = "Increases Growth Speed, Mutation chances and Fruit Size, lasts five minutes. | 120,000 | Mythical",
-    ["Magnifying Glass"] = "Inspect plants to reveal the value without collecting them. | 10,000,000 | Mythical",
-    ["Tanning Mirror"] = "Redirects Sun Beams 10 times before being destroyed. | 1,000,000 | Mythical",
-    ["Master Sprinkler"] = "Greatly increases Growth Speed, Mutation Chances and Fruit Size, lasts 10 minutes. | 10,000,000 | Divine",
-    ["Cleaning Spray"] = "Cleans mutations off fruit, 10 uses. | 15,000,000 | Divine",
-    ["Favourite Tool"] = "Favourites your fruit plants to prevent collecting, 20 uses. | 20,000,000 | Divine",
-    ["Harvest Tool"] = "Harvests all fruit from a chosen plant, 5 uses. | 30,000,000 | Divine",
-    ["Friendship Pot"] = "A flower pot to share with a friend! | 15,000,000 | Divine"
+local eggDetails = {
+    ["Common Egg"] = "50,000 | Golden Lab, Dog, Bunny (33.33% each)",
+    ["Uncommon Egg"] = "150,000 | Black Bunny, Chicken, Cat, Deer (25% each)",
+    ["Rare Egg"] = "600,000 | Orange Tabby, Spotted Deer, Pig, Rooster, Monkey",
+    ["Legendary Egg"] = "3,000,000 | Cow, Silver Monkey, Sea Otter, Turtle, Polar Bear",
+    ["Mythical Egg"] = "8,000,000 | Grey Mouse, Brown Mouse, Squirrel, Red Giant Ant, Red Fox",
+    ["Bug Egg"] = "50,000,000 | Snail, Giant Ant, Caterpillar, Praying Mantis, Dragonfly",
+    ["Exotic Bug Egg"] = "Limited Time Shop",
+    ["Night Egg"] = "25M/50M | Hedgehog, Mole, Frog, Echo Frog, Night Owl, Raccoon",
+    ["Premium Night Egg"] = "199 | Hedgehog, Mole, Frog, Echo Frog, Night Owl, Raccoon",
+    ["Bee Egg"] = "18 | Bee, Honey Bee, Bear Bee, Petal Bee, Queen Bee",
+    ["Anti Bee Egg"] = "Crafting | Wasp, Tarantula Hawk, Moth, Butterfly, Disco Bee",
+    ["Premium Anti Bee Egg"] = "199 | Limited Time Shop",
+    ["Common Summer Egg"] = "1,000,000 | Starfish, Seagull, Crab",
+    ["Rare Summer Egg"] = "25,000,000 | Flamingo, Toucan, Sea Turtle, Orangutan, Seal",
+    ["Paradise Egg"] = "50,000,000 | Ostrich, Peacock, Capybara, Scarlet Macaw, Mimic Octopus",
+    ["Oasis Egg"] = "10 | Meerkat, Sand Snake, Axolotl, Hyacinth Macaw, Fennec Fox",
+    ["Premium Oasis Egg"] = "199 | Limited Time Shop"
 }
-local selectedGear = {}
-
--- Helper: Update Dropdown Text
-local function updateDropdownText(btn, prefix, selected)
-    if #selected == 0 then
-        btn.Text = prefix
-    else
-        btn.Text = prefix .. " " .. table.concat(selected, ", ")
-    end
-end
+local seedOptions = {
+    "Carrot", "Strawberry", "Blueberry", "Tomato", "Cauliflower", "Watermelon", "Rafflesia", "Green Apple", "Avocado", "Banana", "Pineapple", "Kiwi", "Bell Pepper", "Prickly Pear", "Loquat", "Feijoa", "Pitcher Plant", "Sugar Apple"
+}
+local seedDetails = {
+    ["Carrot"] = "10 | Common | 5-25 | ✗/✓",
+    ["Strawberry"] = "50 | Common | 1-6 | ✓/✓",
+    ["Blueberry"] = "400 | Uncommon | 1-5 | ✓/✓",
+    ["Tomato"] = "800 | Rare | 1-3 | ✓/✓",
+    ["Cauliflower"] = "1,300 | Rare | 1-4 | ✓/✓",
+    ["Watermelon"] = "2,500 | Rare | 1-7 | ✗/✓",
+    ["Rafflesia"] = "3,200 | Legendary | 1-? | ✗/✓",
+    ["Green Apple"] = "3,500 | Legendary | 1 | ✓/✓",
+    ["Avocado"] = "5,000 | Legendary | 1 | ✓/✓",
+    ["Banana"] = "7,000 | Legendary | 1 | ✓/✓",
+    ["Pineapple"] = "7,500 | Mythical | 1 | ✓/✓",
+    ["Kiwi"] = "10,000 | Mythical | 1 | ✓/✓",
+    ["Bell Pepper"] = "55,000 | Mythical | 1 | ✓/✓",
+    ["Prickly Pear"] = "555,000 | Mythical | 1 | ✓/✓",
+    ["Loquat"] = "900,000 | Divine | 1 | ✓/✓",
+    ["Feijoa"] = "2,750,000 | Divine | 1 | ✓/✓",
+    ["Pitcher Plant"] = "7,500,000 | Divine | 1 | ✓/✓",
+    ["Sugar Apple"] = "25,000,000 | Prismatic | 1"
+}
 
 -- Helper: Create Dropdown
-local function createDropdown(parent, name, options, details, yPos, prefix, zIndex)
+local function createDropdown(parent, name, options, details, yPos, prefix)
     local btn = Instance.new("TextButton")
     btn.Name = name .. "DropdownBtn"
     btn.Size = UDim2.new(1, -40, 0, 44)
@@ -364,7 +369,7 @@ local function createDropdown(parent, name, options, details, yPos, prefix, zInd
     btn.BorderSizePixel = 0
     btn.TextXAlignment = Enum.TextXAlignment.Center
     btn.Parent = parent
-    btn.ZIndex = zIndex or 2
+    btn.ZIndex = 2
 
     local list = Instance.new("ScrollingFrame")
     list.Name = name .. "DropdownList"
@@ -374,7 +379,7 @@ local function createDropdown(parent, name, options, details, yPos, prefix, zInd
     list.BorderSizePixel = 0
     list.Visible = false
     list.Parent = parent
-    list.ZIndex = (zIndex or 2) + 1
+    list.ZIndex = 3
     list.ClipsDescendants = true
     list.CanvasSize = UDim2.new(0, 0, 0, 0)
     list.ScrollBarThickness = 10
@@ -391,7 +396,7 @@ local function createDropdown(parent, name, options, details, yPos, prefix, zInd
         opt.TextColor3 = Color3.fromRGB(255,255,255)
         opt.BorderSizePixel = 0
         opt.Parent = list
-        opt.ZIndex = (zIndex or 2) + 2
+        opt.ZIndex = 4
         opt.MouseEnter:Connect(function()
             opt.Text = option .. "\n" .. (details[option] or "")
             opt.TextWrapped = true
@@ -406,11 +411,11 @@ local function createDropdown(parent, name, options, details, yPos, prefix, zInd
                 if v == option then table.remove(selected, j) found = true break end
             end
             if not found then table.insert(selected, option) end
-            updateDropdownText(btn, prefix, selected)
+            btn.Text = (#selected == 0) and prefix or (prefix .. " " .. table.concat(selected, ", "))
             opt.BackgroundColor3 = found and Color3.fromRGB(100, 170, 220) or Color3.fromRGB(60, 200, 120)
         end)
     end
-    updateDropdownText(btn, prefix, selected)
+    btn.Text = (#selected == 0) and prefix or (prefix .. " " .. table.concat(selected, ", "))
     list.CanvasSize = UDim2.new(0, 0, 0, #options * 38)
     btn.MouseButton1Click:Connect(function()
         list.Visible = not list.Visible
@@ -419,13 +424,12 @@ local function createDropdown(parent, name, options, details, yPos, prefix, zInd
     return btn, list, selected
 end
 
--- Remove old dropdown/selection code for egg/seed, use new helper
+-- Create Dropdowns
 local eggDropdownBtn, eggDropdownList, selectedEggs = createDropdown(shopFrame, "Egg", eggOptions, eggDetails, 20, "BUY EGG:")
-local seedDropdownBtn, seedDropdownList, selectedSeeds = createDropdown(shopFrame, "Seed", seedOptions, seedDetails, 74 + (#eggOptions > 0 and (#eggOptions * 38) or 0), "BUY SEEDS:")
-local gearDropdownBtn, gearDropdownList, selectedGear = createDropdown(shopFrame, "Gear", gearOptions, gearDetails, 128 + (#eggOptions > 0 and (#eggOptions * 38) or 0) + (#seedOptions > 0 and (#seedOptions * 38) or 0), "BUY GEAR:")
+local seedDropdownBtn, seedDropdownList, selectedSeeds = createDropdown(shopFrame, "Seed", seedOptions, seedDetails, 74 + (#eggOptions * 38), "BUY SEEDS:")
 
--- Auto Buy Toggles
-local function createAutoBuyToggle(parent, name, yPos, zIndex)
+-- Helper: Create Toggle
+local function createAutoBuyToggle(parent, name, yPos)
     local toggle = Instance.new("TextButton")
     toggle.Name = name .. "Toggle"
     toggle.Size = UDim2.new(1, -32, 0, 36)
@@ -438,7 +442,7 @@ local function createAutoBuyToggle(parent, name, yPos, zIndex)
     toggle.BorderSizePixel = 0
     toggle.TextXAlignment = Enum.TextXAlignment.Left
     toggle.Parent = parent
-    toggle.ZIndex = zIndex or 2
+    toggle.ZIndex = 2
 
     local check = Instance.new("TextLabel")
     check.Name = "Checkmark"
@@ -455,10 +459,8 @@ end
 
 local autoBuyEggToggle, eggCheck = createAutoBuyToggle(shopFrame, "Egg", 0)
 local autoBuySeedToggle, seedCheck = createAutoBuyToggle(shopFrame, "Seed", 54)
-local autoBuyGearToggle, gearCheck = createAutoBuyToggle(shopFrame, "Gear", 108)
 
-local autoBuyEggState, autoBuySeedState, autoBuyGearState = false, false, false
-local autoBuyEggLoopRunning, autoBuySeedLoopRunning, autoBuyGearLoopRunning = false, false, false
+local autoBuyEggState, autoBuySeedState = false, false
 
 local function updateAutoBuyToggle(toggle, check, state)
     if state then
@@ -469,68 +471,48 @@ local function updateAutoBuyToggle(toggle, check, state)
         check.Text = ""
     end
 end
-
 updateAutoBuyToggle(autoBuyEggToggle, eggCheck, autoBuyEggState)
 updateAutoBuyToggle(autoBuySeedToggle, seedCheck, autoBuySeedState)
-updateAutoBuyToggle(autoBuyGearToggle, gearCheck, autoBuyGearState)
 
 -- Automation Remotes
 local buyEggRemote = ReplicatedStorage:FindFirstChild("GameEvents") and ReplicatedStorage.GameEvents:FindFirstChild("BuyPetEgg")
 local buySeedRemote = ReplicatedStorage:FindFirstChild("GameEvents") and ReplicatedStorage.GameEvents:FindFirstChild("BuySeedStock")
-local buyGearRemote = ReplicatedStorage:FindFirstChild("GameEvents") and ReplicatedStorage.GameEvents:FindFirstChild("BuyGearStock")
-
-print("[AutoBuyEgg] buyEggRemote:", buyEggRemote)
-print("[AutoBuySeed] buySeedRemote:", buySeedRemote)
-print("[AutoBuyGear] buyGearRemote:", buyGearRemote)
 
 -- Helper: Check if in stock (stub, should be replaced with real stock check if available)
 local function isEggInStock(eggName) return true end
 local function isSeedInStock(seedName) return true end
-local function isGearInStock(gearName) return true end
 
 -- Auto-buy logic
-local function startAutoBuyLoop(stateVar, runningVar, selectedList, remote, isInStock)
-    if not runningVar then
-        runningVar = true
-        task.spawn(function()
-            while true do
-                if stateVar[1] then
-                    for _, item in ipairs(selectedList) do
-                        if isInStock(item) then
-                            if remote then
-                                remote:FireServer(item)
-                            end
+local function startAutoBuyLoop(stateVar, selectedList, remote, isInStock)
+    task.spawn(function()
+        while true do
+            if stateVar[1] then
+                for _, item in ipairs(selectedList) do
+                    if isInStock(item) then
+                        if remote then
+                            remote:FireServer(item)
                         end
                     end
                 end
-                task.wait(0.1)
             end
-        end)
-    end
-    return runningVar
+            task.wait(0.1)
+        end
+    end)
 end
 
 -- Toggle connections
 autoBuyEggToggle.MouseButton1Click:Connect(function()
     autoBuyEggState = not autoBuyEggState
     updateAutoBuyToggle(autoBuyEggToggle, eggCheck, autoBuyEggState)
-    autoBuyEggLoopRunning = startAutoBuyLoop({autoBuyEggState}, autoBuyEggLoopRunning, selectedEggs, buyEggRemote, isEggInStock)
 end)
 autoBuySeedToggle.MouseButton1Click:Connect(function()
     autoBuySeedState = not autoBuySeedState
     updateAutoBuyToggle(autoBuySeedToggle, seedCheck, autoBuySeedState)
-    autoBuySeedLoopRunning = startAutoBuyLoop({autoBuySeedState}, autoBuySeedLoopRunning, selectedSeeds, buySeedRemote, isSeedInStock)
-end)
-autoBuyGearToggle.MouseButton1Click:Connect(function()
-    autoBuyGearState = not autoBuyGearState
-    updateAutoBuyToggle(autoBuyGearToggle, gearCheck, autoBuyGearState)
-    autoBuyGearLoopRunning = startAutoBuyLoop({autoBuyGearState}, autoBuyGearLoopRunning, selectedGear, buyGearRemote, isGearInStock)
 end)
 
 -- Start auto-buy loops on script load
-autoBuyEggLoopRunning = startAutoBuyLoop({autoBuyEggState}, autoBuyEggLoopRunning, selectedEggs, buyEggRemote, isEggInStock)
-autoBuySeedLoopRunning = startAutoBuyLoop({autoBuySeedState}, autoBuySeedLoopRunning, selectedSeeds, buySeedRemote, isSeedInStock)
-autoBuyGearLoopRunning = startAutoBuyLoop({autoBuyGearState}, autoBuyGearLoopRunning, selectedGear, buyGearRemote, isGearInStock)
+startAutoBuyLoop({function() return autoBuyEggState end}, selectedEggs, buyEggRemote, isEggInStock)
+startAutoBuyLoop({function() return autoBuySeedState end}, selectedSeeds, buySeedRemote, isSeedInStock)
 
 -- Update toggle positions based on dropdowns
 function updateShopTogglePositions()
@@ -568,27 +550,34 @@ function updateShopTogglePositions()
         seedDropdownList.Position = UDim2.new(0, 20, 0, y)
         seedDropdownList.Size = UDim2.new(1, -40, 0, 0)
     end
-    -- Gear Dropdown
-    gearDropdownBtn.Position = UDim2.new(0, 20, 0, y)
-    y = y + 44
-    if gearDropdownList.Visible then
-        local dropdownTop = shopFrame.AbsolutePosition.Y + y
-        local maxHeight = contentBottom - dropdownTop - 20
-        local needed = #gearOptions * 38
-        local showHeight = math.max(0, math.min(needed, maxHeight))
-        gearDropdownList.Position = UDim2.new(0, 20, 0, y)
-        gearDropdownList.Size = UDim2.new(1, -40, 0, showHeight)
-        gearDropdownList.CanvasSize = UDim2.new(0, 0, 0, needed)
-        y = y + showHeight
-    else
-        gearDropdownList.Position = UDim2.new(0, 20, 0, y)
-        gearDropdownList.Size = UDim2.new(1, -40, 0, 0)
-    end
     -- Toggles
     autoBuyEggToggle.Position = UDim2.new(0, 20, 0, y + 18)
     autoBuySeedToggle.Position = UDim2.new(0, 20, 0, y + 18 + 54)
-    autoBuyGearToggle.Position = UDim2.new(0, 20, 0, y + 18 + 108)
 end
+
+eggDropdownBtn.MouseButton1Click:Connect(function()
+    eggDropdownList.Visible = not eggDropdownList.Visible
+    updateShopTogglePositions()
+end)
+seedDropdownBtn.MouseButton1Click:Connect(function()
+    seedDropdownList.Visible = not seedDropdownList.Visible
+    updateShopTogglePositions()
+end)
+
+UserInputService.InputBegan:Connect(function(input, processed)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        local changed = false
+        if eggDropdownList.Visible and not eggDropdownBtn:IsAncestorOf(input.Target) then
+            eggDropdownList.Visible = false
+            changed = true
+        end
+        if seedDropdownList.Visible and not seedDropdownBtn:IsAncestorOf(input.Target) then
+            seedDropdownList.Visible = false
+            changed = true
+        end
+        if changed then updateShopTogglePositions() end
+    end
+end)
 
 -- Hide dropdowns if clicking elsewhere
 UserInputService.InputBegan:Connect(function(input, processed)
@@ -602,18 +591,13 @@ UserInputService.InputBegan:Connect(function(input, processed)
             seedDropdownList.Visible = false
             changed = true
         end
-        if gearDropdownList.Visible and not gearDropdownBtn:IsAncestorOf(input.Target) then
-            gearDropdownList.Visible = false
-            changed = true
-        end
         if changed then updateShopTogglePositions() end
     end
 end)
 
 -- Automation Remotes
-local buyEggRemote = ReplicatedStorage:FindFirstChild("GameEvents") and ReplicatedStorage.GameEvents:FindFirstChild("BuyPetEgg")
-local buySeedRemote = ReplicatedStorage:FindFirstChild("GameEvents") and ReplicatedStorage.GameEvents:FindFirstChild("BuySeedStock")
-local buyGearRemote = ReplicatedStorage:FindFirstChild("GameEvents") and ReplicatedStorage.GameEvents:FindFirstChild("BuyGearStock")
+local buyEggRemote = ReplicatedStorage:FindFirstChild("GameEvents"):FindFirstChild("BuyPetEgg")
+local buySeedRemote = ReplicatedStorage:FindFirstChild("GameEvents"):FindFirstChild("BuySeedStock")
 
 -- Helper: Check if an egg/seed is in stock (stub, should be replaced with real stock check if available)
 local function isEggInStock(eggName)
@@ -624,15 +608,10 @@ local function isSeedInStock(seedName)
     -- TODO: Replace with real stock check if possible
     return true -- Assume always in stock for now
 end
-local function isGearInStock(gearName)
-    -- TODO: Replace with real stock check if possible
-    return true -- Assume always in stock for now
-end
 
 -- Auto-buy logic
 local autoBuyEggLoopRunning = false
 local autoBuySeedLoopRunning = false
-local autoBuyGearLoopRunning = false
 
 -- Start auto-buy egg loop on script load
 if not autoBuyEggLoopRunning then
@@ -663,25 +642,6 @@ if not autoBuySeedLoopRunning then
                     if isSeedInStock(seed) then
                         if buySeedRemote then
                             buySeedRemote:FireServer(seed)
-                        end
-                    end
-                end
-            end
-            task.wait(0.1)
-        end
-    end)
-end
-
--- Start auto-buy gear loop on script load
-if not autoBuyGearLoopRunning then
-    autoBuyGearLoopRunning = true
-    task.spawn(function()
-        while true do
-            if autoBuyGearState then
-                for _, gear in ipairs(selectedGear) do
-                    if isGearInStock(gear) then
-                        if buyGearRemote then
-                            buyGearRemote:FireServer(gear)
                         end
                     end
                 end

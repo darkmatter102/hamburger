@@ -747,6 +747,7 @@ gearCheck.Text = ""
 gearCheck.Parent = autoBuyGearToggle
 
 local autoBuyGearState = false
+local autoBuyGearLoopRunning = false
 local function updateAutoBuyGearToggle()
     if autoBuyGearState then
         autoBuyGearToggle.BackgroundColor3 = Color3.fromRGB(40, 90, 180)
@@ -757,6 +758,28 @@ local function updateAutoBuyGearToggle()
     end
 end
 updateAutoBuyGearToggle()
+
+autoBuyGearToggle.MouseButton1Click:Connect(function()
+    autoBuyGearState = not autoBuyGearState
+    updateAutoBuyGearToggle()
+    if autoBuyGearState and not autoBuyGearLoopRunning then
+        autoBuyGearLoopRunning = true
+        task.spawn(function()
+            while autoBuyGearState do
+                local buyGearRemote = ReplicatedStorage:FindFirstChild("GameEvents") and ReplicatedStorage.GameEvents:FindFirstChild("BuyGearStock")
+                for _, gear in ipairs(selectedGears) do
+                    if isGearInStock(gear) then
+                        if buyGearRemote then
+                            buyGearRemote:FireServer(gear)
+                        end
+                    end
+                end
+                task.wait(0.1)
+            end
+            autoBuyGearLoopRunning = false
+        end)
+    end
+end)
 
 -- Automation Remotes
 local buyEggRemote = ReplicatedStorage:FindFirstChild("GameEvents"):FindFirstChild("BuyPetEgg")
@@ -807,27 +830,6 @@ if not autoBuySeedLoopRunning then
                     if isSeedInStock(seed) then
                         if buySeedRemote then
                             buySeedRemote:FireServer(seed)
-                        end
-                    end
-                end
-            end
-            task.wait(0.1)
-        end
-    end)
-end
-
--- Auto-buy gear logic (always running)
-local autoBuyGearLoopRunning = false
-if not autoBuyGearLoopRunning then
-    autoBuyGearLoopRunning = true
-    task.spawn(function()
-        while true do
-            if autoBuyGearState then
-                local buyGearRemote = ReplicatedStorage:FindFirstChild("GameEvents") and ReplicatedStorage.GameEvents:FindFirstChild("BuyGearStock")
-                for _, gear in ipairs(selectedGears) do
-                    if isGearInStock(gear) then
-                        if buyGearRemote then
-                            buyGearRemote:FireServer(gear)
                         end
                     end
                 end

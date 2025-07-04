@@ -174,6 +174,7 @@ topBar.Position = UDim2.new(0, 0, 0, 0)
 topBar.BackgroundColor3 = Color3.fromRGB(80, 90, 110)
 topBar.BorderSizePixel = 0
 topBar.Parent = sidebar
+topBar.ZIndex = 2
 
 local topBarTitle = Instance.new("TextLabel")
 topBarTitle.Name = "TopBarTitle"
@@ -224,6 +225,7 @@ for i, name in ipairs(tabNames) do
     tabBtn.TextColor3 = Color3.fromRGB(40, 40, 40)
     tabBtn.BorderSizePixel = 0
     tabBtn.Parent = sidebar
+    tabBtn.ZIndex = 3 -- Ensure tab buttons are above TopBar
     tabButtons[name] = tabBtn
 end
 

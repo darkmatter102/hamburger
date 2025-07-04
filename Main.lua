@@ -745,7 +745,6 @@ gearCheck.Text = ""
 gearCheck.Parent = autoBuyGearToggle
 
 local autoBuyGearState = false
-local autoBuyGearLoopRunning = false
 local function updateAutoBuyGearToggle()
     if autoBuyGearState then
         autoBuyGearToggle.BackgroundColor3 = Color3.fromRGB(40, 90, 180)
@@ -757,27 +756,47 @@ local function updateAutoBuyGearToggle()
 end
 updateAutoBuyGearToggle()
 
+-- Automation Remotes
+local buyEggRemote = ReplicatedStorage:FindFirstChild("GameEvents"):FindFirstChild("BuyPetEgg")
+local buySeedRemote = ReplicatedStorage:FindFirstChild("GameEvents"):FindFirstChild("BuySeedStock")
+local buyGearRemote = ReplicatedStorage:FindFirstChild("GameEvents"):FindFirstChild("BuyGearStock")
+
+-- Helper: Check if an egg/seed/gear is in stock (stub, should be replaced with real stock check if available)
+local function isEggInStock(eggName)
+    return true -- Assume always in stock for now
+end
+local function isSeedInStock(seedName)
+    return true -- Assume always in stock for now
+end
+local function isGearInStock(gearName)
+    return true -- Assume always in stock for now
+end
+
+-- Auto-buy gear logic (always running, like eggs/seeds)
+local autoBuyGearLoopRunning = false
+if not autoBuyGearLoopRunning then
+    autoBuyGearLoopRunning = true
+    task.spawn(function()
+        while true do
+            if autoBuyGearState then
+                for _, gear in ipairs(selectedGears) do
+                    if isGearInStock(gear) then
+                        if buyGearRemote then
+                            buyGearRemote:FireServer(gear)
+                        end
+                    end
+                end
+            end
+            task.wait(0.1)
+        end
+    end)
+end
+
+-- Only update toggle state on click
 autoBuyGearToggle.MouseButton1Click:Connect(function()
     autoBuyGearState = not autoBuyGearState
     updateAutoBuyGearToggle()
-    if autoBuyGearState and not autoBuyGearLoopRunning then
-        autoBuyGearLoopRunning = true
-        task.spawn(function()
-            while autoBuyGearState do
-                for _, gear in ipairs(selectedGears) do
-                    if buyGearRemote then
-                        buyGearRemote:FireServer(gear)
-                    end
-                end
-                task.wait(0.1)
-            end
-            autoBuyGearLoopRunning = false
-        end)
-    end
 end)
-
--- Automation Remote for Gear
-local buyGearRemote = ReplicatedStorage:FindFirstChild("GameEvents"):FindFirstChild("BuyGearStock")
 
 -- Update SHOP toggle/element positions
 function updateShopTogglePositions()
@@ -862,20 +881,6 @@ UserInputService.InputBegan:Connect(function(input, processed)
         if changed then updateShopTogglePositions() end
     end
 end)
-
--- Automation Remotes
-local buyEggRemote = ReplicatedStorage:FindFirstChild("GameEvents"):FindFirstChild("BuyPetEgg")
-local buySeedRemote = ReplicatedStorage:FindFirstChild("GameEvents"):FindFirstChild("BuySeedStock")
-
--- Helper: Check if an egg/seed is in stock (stub, should be replaced with real stock check if available)
-local function isEggInStock(eggName)
-    -- TODO: Replace with real stock check if possible
-    return true -- Assume always in stock for now
-end
-local function isSeedInStock(seedName)
-    -- TODO: Replace with real stock check if possible
-    return true -- Assume always in stock for now
-end
 
 -- Tab Switching Logic
 local function selectTab(tabName)

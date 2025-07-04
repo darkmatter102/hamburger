@@ -166,7 +166,7 @@ sidebar.BorderSizePixel = 0
 sidebar.Parent = screenGui
 sidebar.Visible = true
 
--- Top Bar
+-- Top Bar (move this before tab buttons)
 local topBar = Instance.new("Frame")
 topBar.Name = "TopBar"
 topBar.Size = UDim2.new(1, 0, 0, 44) -- Increased height
@@ -174,7 +174,7 @@ topBar.Position = UDim2.new(0, 0, 0, 0)
 topBar.BackgroundColor3 = Color3.fromRGB(80, 90, 110)
 topBar.BorderSizePixel = 0
 topBar.Parent = sidebar
-
+topBar.ZIndex = 10
 
 local topBarTitle = Instance.new("TextLabel")
 topBarTitle.Name = "TopBarTitle"
@@ -187,6 +187,7 @@ topBarTitle.TextSize = 24
 topBarTitle.TextColor3 = Color3.fromRGB(40, 40, 40)
 topBarTitle.TextXAlignment = Enum.TextXAlignment.Left
 topBarTitle.Parent = topBar
+topBarTitle.ZIndex = 11
 
 local minimizeBtn = Instance.new("TextButton")
 minimizeBtn.Name = "MinimizeBtn"
@@ -198,6 +199,7 @@ minimizeBtn.Font = Enum.Font.SourceSansBold
 minimizeBtn.TextSize = 22
 minimizeBtn.TextColor3 = Color3.fromRGB(0,0,0)
 minimizeBtn.Parent = topBar
+minimizeBtn.ZIndex = 11
 
 local closeBtn = Instance.new("TextButton")
 closeBtn.Name = "CloseBtn"
@@ -209,8 +211,9 @@ closeBtn.Font = Enum.Font.SourceSansBold
 closeBtn.TextSize = 22
 closeBtn.TextColor3 = Color3.fromRGB(255,255,255)
 closeBtn.Parent = topBar
+closeBtn.ZIndex = 11
 
--- Sidebar Tabs
+-- Sidebar Tabs (set ZIndex lower than topBar)
 local tabNames = {"EVENT", "SHOP", "FARM"}
 local tabButtons = {}
 for i, name in ipairs(tabNames) do
@@ -225,6 +228,7 @@ for i, name in ipairs(tabNames) do
     tabBtn.TextColor3 = Color3.fromRGB(40, 40, 40)
     tabBtn.BorderSizePixel = 0
     tabBtn.Parent = sidebar
+    tabBtn.ZIndex = 9
     tabButtons[name] = tabBtn
 end
 
@@ -535,6 +539,7 @@ for i, name in ipairs(eggOptions) do
             if v == name then table.remove(selectedEggs, j) found = true break end
         end
         if not found then table.insert(selectedEggs, name) end
+        print("[DEBUG] selectedEggs:", table.concat(selectedEggs, ", "))
         updateEggDropdownText()
         opt.BackgroundColor3 = found and Color3.fromRGB(100, 170, 220) or Color3.fromRGB(60, 200, 120)
         -- Don't close dropdown on click, allow multi-select
@@ -648,6 +653,7 @@ for i, name in ipairs(seedOptions) do
             if v == name then table.remove(selectedSeeds, j) found = true break end
         end
         if not found then table.insert(selectedSeeds, name) end
+        print("[DEBUG] selectedSeeds:", table.concat(selectedSeeds, ", "))
         updateSeedDropdownText()
         opt.BackgroundColor3 = found and Color3.fromRGB(100, 170, 220) or Color3.fromRGB(60, 200, 120)
         -- Don't close dropdown on click, allow multi-select
@@ -722,6 +728,7 @@ for i, name in ipairs(gearOptions) do
             if v == name then table.remove(selectedGears, j) found = true break end
         end
         if not found then table.insert(selectedGears, name) end
+        print("[DEBUG] selectedGears:", table.concat(selectedGears, ", "))
         updateGearDropdownText()
         opt.BackgroundColor3 = found and Color3.fromRGB(100, 170, 220) or Color3.fromRGB(60, 200, 120)
         -- Don't close dropdown on click, allow multi-select

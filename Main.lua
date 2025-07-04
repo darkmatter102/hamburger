@@ -174,7 +174,7 @@ topBar.Position = UDim2.new(0, 0, 0, 0)
 topBar.BackgroundColor3 = Color3.fromRGB(80, 90, 110)
 topBar.BorderSizePixel = 0
 topBar.Parent = sidebar
-topBar.ZIndex = 2
+
 
 local topBarTitle = Instance.new("TextLabel")
 topBarTitle.Name = "TopBarTitle"
@@ -225,7 +225,6 @@ for i, name in ipairs(tabNames) do
     tabBtn.TextColor3 = Color3.fromRGB(40, 40, 40)
     tabBtn.BorderSizePixel = 0
     tabBtn.Parent = sidebar
-    tabBtn.ZIndex = 3 -- Ensure tab buttons are above TopBar
     tabButtons[name] = tabBtn
 end
 
@@ -356,9 +355,12 @@ autoBuyEggToggle.MouseButton1Click:Connect(function()
         task.spawn(function()
             while autoBuyEggState do
                 for _, egg in ipairs(selectedEggs) do
+                    print("[AutoBuyEgg] Trying to buy:", egg)
                     if isEggInStock(egg) then
                         if buyEggRemote then
                             buyEggRemote:FireServer(egg)
+                        else
+                            warn("[AutoBuyEgg] buyEggRemote is nil!")
                         end
                     end
                 end
@@ -414,9 +416,12 @@ autoBuySeedToggle.MouseButton1Click:Connect(function()
         task.spawn(function()
             while autoBuySeedState do
                 for _, seed in ipairs(selectedSeeds) do
+                    print("[AutoBuySeed] Trying to buy:", seed)
                     if isSeedInStock(seed) then
                         if buySeedRemote then
                             buySeedRemote:FireServer(seed)
+                        else
+                            warn("[AutoBuySeed] buySeedRemote is nil!")
                         end
                     end
                 end
@@ -532,6 +537,7 @@ for i, name in ipairs(eggOptions) do
         if not found then table.insert(selectedEggs, name) end
         updateEggDropdownText()
         opt.BackgroundColor3 = found and Color3.fromRGB(100, 170, 220) or Color3.fromRGB(60, 200, 120)
+        -- Don't close dropdown on click, allow multi-select
     end)
 end
 updateEggDropdownText()
@@ -644,6 +650,7 @@ for i, name in ipairs(seedOptions) do
         if not found then table.insert(selectedSeeds, name) end
         updateSeedDropdownText()
         opt.BackgroundColor3 = found and Color3.fromRGB(100, 170, 220) or Color3.fromRGB(60, 200, 120)
+        -- Don't close dropdown on click, allow multi-select
     end)
 end
 updateSeedDropdownText()
@@ -717,6 +724,7 @@ for i, name in ipairs(gearOptions) do
         if not found then table.insert(selectedGears, name) end
         updateGearDropdownText()
         opt.BackgroundColor3 = found and Color3.fromRGB(100, 170, 220) or Color3.fromRGB(60, 200, 120)
+        -- Don't close dropdown on click, allow multi-select
     end)
 end
 updateGearDropdownText()
@@ -767,8 +775,11 @@ autoBuyGearToggle.MouseButton1Click:Connect(function()
         task.spawn(function()
             while autoBuyGearState do
                 for _, gear in ipairs(selectedGears) do
+                    print("[AutoBuyGear] Trying to buy:", gear)
                     if buyGearRemote then
                         buyGearRemote:FireServer(gear)
+                    else
+                        warn("[AutoBuyGear] buyGearRemote is nil!")
                     end
                 end
                 task.wait(0.1)

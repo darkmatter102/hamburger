@@ -842,53 +842,56 @@ end
 
 eggDropdownBtn.MouseButton1Click:Connect(function()
     eggDropdownList.Visible = not eggDropdownList.Visible
+    seedDropdownList.Visible = false
+    gearDropdownList.Visible = false
+    if eggDropdownList.Visible then showDropdownOverlay() else hideDropdownOverlay() end
     updateShopTogglePositions()
 end)
 
 seedDropdownBtn.MouseButton1Click:Connect(function()
     seedDropdownList.Visible = not seedDropdownList.Visible
+    eggDropdownList.Visible = false
+    gearDropdownList.Visible = false
+    if seedDropdownList.Visible then showDropdownOverlay() else hideDropdownOverlay() end
     updateShopTogglePositions()
 end)
 
 gearDropdownBtn.MouseButton1Click:Connect(function()
     gearDropdownList.Visible = not gearDropdownList.Visible
+    eggDropdownList.Visible = false
+    seedDropdownList.Visible = false
+    if gearDropdownList.Visible then showDropdownOverlay() else hideDropdownOverlay() end
     updateShopTogglePositions()
 end)
 
--- Hide dropdowns if clicking elsewhere
-UserInputService.InputBegan:Connect(function(input, processed)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        local changed = false
-        if eggDropdownList.Visible and input.Target and not eggDropdownBtn:IsAncestorOf(input.Target) then
-            eggDropdownList.Visible = false
-            changed = true
-        end
-        if seedDropdownList.Visible and input.Target and not seedDropdownBtn:IsAncestorOf(input.Target) then
-            seedDropdownList.Visible = false
-            changed = true
-        end
-        if gearDropdownList.Visible and input.Target and not gearDropdownBtn:IsAncestorOf(input.Target) then
-            gearDropdownList.Visible = false
-            changed = true
-        end
-        if changed then updateShopTogglePositions() end
-    end
-end)
+-- Overlay for closing dropdowns when clicking outside
+local dropdownOverlay = Instance.new("TextButton")
+dropdownOverlay.Name = "DropdownOverlay"
+dropdownOverlay.BackgroundTransparency = 1
+dropdownOverlay.BackgroundColor3 = Color3.new(0,0,0)
+dropdownOverlay.BorderSizePixel = 0
+dropdownOverlay.Size = UDim2.new(1,0,1,0)
+dropdownOverlay.Position = UDim2.new(0,0,0,0)
+dropdownOverlay.ZIndex = 10
+dropdownOverlay.Text = ""
+dropdownOverlay.Visible = false
+dropdownOverlay.Parent = screenGui
 
--- Tab Switching Logic
-local function selectTab(tabName)
-    for name, btn in pairs(tabButtons) do
-        btn.BackgroundColor3 = name == tabName and Color3.fromRGB(220, 160, 80) or Color3.fromRGB(80, 90, 110)
-    end
-    for name, frame in pairs(tabContent) do
-        frame.Visible = (name == tabName)
-    end
+def function showDropdownOverlay()
+    dropdownOverlay.Visible = true
 end
-for name, btn in pairs(tabButtons) do
-    btn.MouseButton1Click:Connect(function()
-        selectTab(name)
-    end)
+
+def function hideDropdownOverlay()
+    dropdownOverlay.Visible = false
 end
+
+dropdownOverlay.MouseButton1Click:Connect(function()
+    eggDropdownList.Visible = false
+    seedDropdownList.Visible = false
+    gearDropdownList.Visible = false
+    hideDropdownOverlay()
+    updateShopTogglePositions()
+end)
 
 -- Hide/Show Logic
 local showUIButton = Instance.new("TextButton")

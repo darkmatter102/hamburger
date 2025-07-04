@@ -758,10 +758,27 @@ local function updateAutoBuyGearToggle()
 end
 updateAutoBuyGearToggle()
 
--- Automation Remotes
-local buyEggRemote = ReplicatedStorage:FindFirstChild("GameEvents"):FindFirstChild("BuyPetEgg")
-local buySeedRemote = ReplicatedStorage:FindFirstChild("GameEvents"):FindFirstChild("BuySeedStock")
-local buyGearRemote = ReplicatedStorage:FindFirstChild("GameEvents"):FindFirstChild("BuyGearStock")
+autoBuyGearToggle.MouseButton1Click:Connect(function()
+    autoBuyGearState = not autoBuyGearState
+    updateAutoBuyGearToggle()
+    if autoBuyGearState and not autoBuyGearLoopRunning then
+        autoBuyGearLoopRunning = true
+        task.spawn(function()
+            while autoBuyGearState do
+                local buyGearRemote = ReplicatedStorage:FindFirstChild("GameEvents") and ReplicatedStorage.GameEvents:FindFirstChild("BuyGearStock")
+                for _, gear in ipairs(selectedGears) do
+                    if isGearInStock(gear) then
+                        if buyGearRemote then
+                            buyGearRemote:FireServer(gear)
+                        end
+                    end
+                end
+                task.wait(0.1)
+            end
+            autoBuyGearLoopRunning = false
+        end)
+    end
+end)
 
 -- Helper: Check if an egg/seed/gear is in stock (stub, should be replaced with real stock check if available)
 local function isEggInStock(eggName)
@@ -772,69 +789,6 @@ local function isSeedInStock(seedName)
 end
 local function isGearInStock(gearName)
     return true -- Assume always in stock for now
-end
-
--- Auto-buy egg logic (always running)
-local autoBuyEggLoopRunning = false
-if not autoBuyEggLoopRunning then
-    autoBuyEggLoopRunning = true
-    task.spawn(function()
-        while true do
-            if autoBuyEggState then
-                local buyEggRemote = ReplicatedStorage:FindFirstChild("GameEvents") and ReplicatedStorage.GameEvents:FindFirstChild("BuyPetEgg")
-                for _, egg in ipairs(selectedEggs) do
-                    if isEggInStock(egg) then
-                        if buyEggRemote then
-                            buyEggRemote:FireServer(egg)
-                        end
-                    end
-                end
-            end
-            task.wait(0.1)
-        end
-    end)
-end
-
--- Auto-buy seed logic (always running)
-local autoBuySeedLoopRunning = false
-if not autoBuySeedLoopRunning then
-    autoBuySeedLoopRunning = true
-    task.spawn(function()
-        while true do
-            if autoBuySeedState then
-                local buySeedRemote = ReplicatedStorage:FindFirstChild("GameEvents") and ReplicatedStorage.GameEvents:FindFirstChild("BuySeedStock")
-                for _, seed in ipairs(selectedSeeds) do
-                    if isSeedInStock(seed) then
-                        if buySeedRemote then
-                            buySeedRemote:FireServer(seed)
-                        end
-                    end
-                end
-            end
-            task.wait(0.1)
-        end
-    end)
-end
-
--- Auto-buy gear logic (always running)
-local autoBuyGearLoopRunning = false
-if not autoBuyGearLoopRunning then
-    autoBuyGearLoopRunning = true
-    task.spawn(function()
-        while true do
-            if autoBuyGearState then
-                local buyGearRemote = ReplicatedStorage:FindFirstChild("GameEvents") and ReplicatedStorage.GameEvents:FindFirstChild("BuyGearStock")
-                for _, gear in ipairs(selectedGears) do
-                    if isGearInStock(gear) then
-                        if buyGearRemote then
-                            buyGearRemote:FireServer(gear)
-                        end
-                    end
-                end
-            end
-            task.wait(0.1)
-        end
-    end)
 end
 
 -- Update SHOP toggle/element positions

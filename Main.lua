@@ -888,11 +888,11 @@ dropdownOverlay.Text = ""
 dropdownOverlay.Visible = false
 dropdownOverlay.Parent = screenGui
 
-def function showDropdownOverlay()
+local function showDropdownOverlay()
     dropdownOverlay.Visible = true
 end
 
-def function hideDropdownOverlay()
+local function hideDropdownOverlay()
     dropdownOverlay.Visible = false
 end
 

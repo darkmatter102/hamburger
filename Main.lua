@@ -944,7 +944,7 @@ local function hideUI()
 end
 local function showUI()
     sidebar.Visible = true
-end)
+end
 UserInputService.InputBegan:Connect(function(input, processed)
     if not processed and input.KeyCode == Enum.KeyCode.RightShift then
         if sidebar.Visible then

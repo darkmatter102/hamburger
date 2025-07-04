@@ -353,7 +353,6 @@ autoBuyEggToggle.MouseButton1Click:Connect(function()
         autoBuyEggLoopRunning = true
         task.spawn(function()
             while autoBuyEggState do
-                local buyEggRemote = ReplicatedStorage:FindFirstChild("GameEvents") and ReplicatedStorage.GameEvents:FindFirstChild("BuyPetEgg")
                 for _, egg in ipairs(selectedEggs) do
                     if isEggInStock(egg) then
                         if buyEggRemote then
@@ -412,7 +411,6 @@ autoBuySeedToggle.MouseButton1Click:Connect(function()
         autoBuySeedLoopRunning = true
         task.spawn(function()
             while autoBuySeedState do
-                local buySeedRemote = ReplicatedStorage:FindFirstChild("GameEvents") and ReplicatedStorage.GameEvents:FindFirstChild("BuySeedStock")
                 for _, seed in ipairs(selectedSeeds) do
                     if isSeedInStock(seed) then
                         if buySeedRemote then
@@ -747,6 +745,7 @@ gearCheck.Text = ""
 gearCheck.Parent = autoBuyGearToggle
 
 local autoBuyGearState = false
+local autoBuyGearLoopRunning = false
 local function updateAutoBuyGearToggle()
     if autoBuyGearState then
         autoBuyGearToggle.BackgroundColor3 = Color3.fromRGB(40, 90, 180)
@@ -765,12 +764,9 @@ autoBuyGearToggle.MouseButton1Click:Connect(function()
         autoBuyGearLoopRunning = true
         task.spawn(function()
             while autoBuyGearState do
-                local buyGearRemote = ReplicatedStorage:FindFirstChild("GameEvents") and ReplicatedStorage.GameEvents:FindFirstChild("BuyGearStock")
                 for _, gear in ipairs(selectedGears) do
-                    if isGearInStock(gear) then
-                        if buyGearRemote then
-                            buyGearRemote:FireServer(gear)
-                        end
+                    if buyGearRemote then
+                        buyGearRemote:FireServer(gear)
                     end
                 end
                 task.wait(0.1)
@@ -780,16 +776,8 @@ autoBuyGearToggle.MouseButton1Click:Connect(function()
     end
 end)
 
--- Helper: Check if an egg/seed/gear is in stock (stub, should be replaced with real stock check if available)
-local function isEggInStock(eggName)
-    return true -- Assume always in stock for now
-end
-local function isSeedInStock(seedName)
-    return true -- Assume always in stock for now
-end
-local function isGearInStock(gearName)
-    return true -- Assume always in stock for now
-end
+-- Automation Remote for Gear
+local buyGearRemote = ReplicatedStorage:FindFirstChild("GameEvents"):FindFirstChild("BuyGearStock")
 
 -- Update SHOP toggle/element positions
 function updateShopTogglePositions()
@@ -874,6 +862,20 @@ UserInputService.InputBegan:Connect(function(input, processed)
         if changed then updateShopTogglePositions() end
     end
 end)
+
+-- Automation Remotes
+local buyEggRemote = ReplicatedStorage:FindFirstChild("GameEvents"):FindFirstChild("BuyPetEgg")
+local buySeedRemote = ReplicatedStorage:FindFirstChild("GameEvents"):FindFirstChild("BuySeedStock")
+
+-- Helper: Check if an egg/seed is in stock (stub, should be replaced with real stock check if available)
+local function isEggInStock(eggName)
+    -- TODO: Replace with real stock check if possible
+    return true -- Assume always in stock for now
+end
+local function isSeedInStock(seedName)
+    -- TODO: Replace with real stock check if possible
+    return true -- Assume always in stock for now
+end
 
 -- Tab Switching Logic
 local function selectTab(tabName)
